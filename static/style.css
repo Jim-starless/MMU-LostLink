@@ -3,13 +3,21 @@
     max-width: 500px;
 }
 
-.form-floating label {
-    opacity: 75%;
-}
-
 .signup form {
     min-width: 200px;
     width: 100%;
     max-width: 350px;
 }
 
+.form-floating label {
+  opacity: 75% !important;
+}
+
+#password {
+    padding-right: 55px;
+}
+
+#toggle_password {
+    opacity: 85%;
+    border: none !important;
+}
