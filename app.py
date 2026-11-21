@@ -15,10 +15,11 @@ def home():
 @app.route("/signup",methods=["POST","GET"])
 def signup():
     #Variables
+    user_input = {}
     errors = {}
 
     if request.method == "GET":
-        return render_template("signup.html", errors=errors)
+        return render_template("signup.html", errors=errors, user_input={})
 
     if request.method == "POST":
         Username = request.form.get("Username")
@@ -32,11 +33,12 @@ def signup():
             errors["Email"] = "Email is required."
         if not Password:
             errors["Password"] = "Password is required."
+        if Password != cPassword:
+            errors["cPassword"] = "Password is incorrect."
         if not cPassword:
             errors["cPassword"] = "Please confirm your password."
-
         if errors:
-            return render_template("signup.html", errors=errors)
+            return render_template("signup.html", errors=errors, user_input=request.form)
         
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
