@@ -14,17 +14,29 @@ def home():
 #SIGN UP ROUTE i haven't finish this
 @app.route("/signup",methods=["POST","GET"])
 def signup():
+    #Variables
+    errors = {}
+
     if request.method == "GET":
-        return render_template("signup.html")
+        return render_template("signup.html", errors=errors)
 
     if request.method == "POST":
-        Username = request.form.get["Username"]
-        Email = request.form.get["Email"]
-        Password = request.form.get["Password"]
-        cPassword = request.form.get["cPassword"]
-        
-        if not Username or not Email or not Password or not cPassword:
-            return "All fields are required! Please go back and fill them out."
+        Username = request.form.get("Username")
+        Email = request.form.get("Email")
+        Password = request.form.get("Password")
+        cPassword = request.form.get("cPassword")
+
+        if not Username:
+            errors["Username"] = "Username is required."
+        if not Email:
+            errors["Email"] = "Email is required."
+        if not Password:
+            errors["Password"] = "Password is required."
+        if not cPassword:
+            errors["cPassword"] = "Please confirm your password."
+
+        if errors:
+            return render_template("signup.html", errors=errors)
         
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
