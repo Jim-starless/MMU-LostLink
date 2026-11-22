@@ -1,9 +1,16 @@
 from flask import Flask, render_template, request
-import sqlite3, os
+import sqlite3, os, re
 
 app = Flask(__name__)
-
 currentdirectory = os.path.dirname(os.path.abspath(__file__))
+
+#---Variables---
+pattern = re.compile(r"^[a-zA-Z.]+@(student\.)?mmu\.edu\.my$")
+
+#---Put all functions here---
+#Check email function
+def verify_email(email):
+    return pattern.fullmatch(email.strip()) is not None
 
 #HOMEPAGE ROUTE
 @app.route("/")
@@ -29,6 +36,8 @@ def signup():
 
         if not Username:
             errors["Username"] = "Username is required."
+        if verify_email(Email) == False:
+            errors["Email"] = "Invalid email. Please use MMU email address"
         if not Email:
             errors["Email"] = "Email is required."
         if not Password:

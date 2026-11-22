@@ -17,7 +17,7 @@
 
             <div class=" fw-light h1 text-center mt-5 mb-4">Welcome</div>
             
-            <form action="/signup" method="POST">
+            <form action="/signup" method="POST" novalidate>
             
                     <div class= "form-floating">
                         <input type="text" class="shadow-sm form-control" value="{{user_input.get('Username', '')}}" id="username" name="Username" placeholder="">
