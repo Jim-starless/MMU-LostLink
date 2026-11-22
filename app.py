@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-import sqlite3, os, re
+from werkzeug.security import generate_password_hash
+import sqlite3, os, re 
 
 app = Flask(__name__)
 currentdirectory = os.path.dirname(os.path.abspath(__file__))
@@ -36,12 +37,15 @@ def signup():
 
         if not Username:
             errors["Username"] = "Username is required."
+
         if verify_email(Email) == False:
             errors["Email"] = "Invalid email. Please use MMU email address"
         if not Email:
             errors["Email"] = "Email is required."
+
         if not Password:
             errors["Password"] = "Password is required."
+
         if Password != cPassword:
             errors["cPassword"] = "Password is incorrect."
         if not cPassword:
@@ -50,12 +54,21 @@ def signup():
             return render_template("signup.html", errors=errors, user_input=request.form)
         
         connection = sqlite3.connect("database.db")
-        cursor = connection.cursor()
-        query1 = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
-        cursor.execute(query1, (Username, Email, Password))
 
-        connection.commit()
+        try:
+            hashed = generate_password_hash(Password)
+            connection.execute(
+                "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+                (Username, Email, hashed),
+            )
+            connection.commit()
+
+        except sqlite3.IntegrityError:
+            errors["Email"] = "This email is already registered."
+            return render_template("signup.html", errors=errors, user_input=request.form)
+
         connection.close()
+        return "Sign up successfully but we dont have login page"
 
 
 if __name__ == "__main__":
