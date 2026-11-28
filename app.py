@@ -55,7 +55,7 @@ def signup():
 
         if verify_email(Email) == False:
             errors["Email"] = "Invalid email. Please use MMU email address."
-        elif not Email:
+        if not Email:
             errors["Email"] = "Email is required."
 
         if not Password:
