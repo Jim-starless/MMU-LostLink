@@ -19,6 +19,18 @@ def verify_username(username):
 #check username have at least a letter cause they can do ______ and it still works
 def verify_username_has_letter(username):
     return bool(re.search(r"[a-zA-Z]", username))
+#initiate database (create database table and file if currently it doesnt exists)
+def init_database():
+    connection = sqlite3.connect("database.db")
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    """)
 
 #HOMEPAGE ROUTE
 @app.route("/")
@@ -52,11 +64,11 @@ def signup():
             errors["Username"] = "Username can only contain alphabets, numbers and underscores."
         elif verify_username_has_letter(Username) == False:
             errors["Username"] = "Username must contain at least one letter."
-
-        if verify_email(Email) == False:
-            errors["Email"] = "Invalid email. Please use MMU email address."
+        
         if not Email:
             errors["Email"] = "Email is required."
+        elif verify_email(Email) == False:
+            errors["Email"] = "Invalid email. Please use MMU email address."
 
         if not Password:
             errors["Password"] = "Password is required."
@@ -70,6 +82,8 @@ def signup():
         if errors:
             return render_template("signup.html", errors=errors, user_input=request.form)
         
+        init_database()
+
         connection = sqlite3.connect("database.db")
 
         try:
